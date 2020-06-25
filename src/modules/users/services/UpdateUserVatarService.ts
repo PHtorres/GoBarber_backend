@@ -1,9 +1,9 @@
-import { getRepository } from 'typeorm';
 import User from '../infra/typeorm/entities/User';
 import path from 'path';
 import uploadConfig from '../../../config/upload';
 import fs from 'fs';
 import AppError from '../../../shared/errors/AppError';
+import IUsersRepository from '../repositories/IUsersRepository';
 
 interface RequestDTO {
     user_id: string;
@@ -13,10 +13,11 @@ interface RequestDTO {
 
 export default class UpdateUserAvatarService {
 
-    public async execute(dados: RequestDTO): Promise<User> {
-        const userRepository = getRepository(User);
+    constructor(private usersRepository: IUsersRepository) { }
 
-        const user = await userRepository.findOne(dados.user_id);
+    public async execute(dados: RequestDTO): Promise<User> {
+
+        const user = await this.usersRepository.findById(dados.user_id);
 
         if (!user) {
             throw new AppError('Only authenticated users can change avatar image', 401);
@@ -32,7 +33,8 @@ export default class UpdateUserAvatarService {
         }
 
         user.avatar = dados.avatarFileName;
-        await userRepository.save(user);
+
+        await this.usersRepository.save(user);
 
         return user;
 
