@@ -4,6 +4,8 @@ import uploadConfig from '../../../config/upload';
 import fs from 'fs';
 import AppError from '../../../shared/errors/AppError';
 import IUsersRepository from '../repositories/IUsersRepository';
+import { injectable, inject } from 'tsyringe';
+
 
 interface RequestDTO {
     user_id: string;
@@ -11,9 +13,13 @@ interface RequestDTO {
 }
 
 
+@injectable()
 export default class UpdateUserAvatarService {
 
-    constructor(private usersRepository: IUsersRepository) { }
+    constructor(
+        @inject('UsersRepository')
+        private usersRepository: IUsersRepository
+    ) { }
 
     public async execute(dados: RequestDTO): Promise<User> {
 
@@ -27,7 +33,7 @@ export default class UpdateUserAvatarService {
             const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
             const userAvatarFileExists = await fs.promises.stat(userAvatarFilePath);
 
-            if(userAvatarFileExists){
+            if (userAvatarFileExists) {
                 await fs.promises.unlink(userAvatarFilePath);
             }
         }
