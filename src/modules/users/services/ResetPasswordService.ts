@@ -2,35 +2,38 @@ import User from '../infra/typeorm/entities/User';
 import AppError from '../../../shared/errors/AppError';
 import IUsersRepository from '../repositories/IUsersRepository';
 import IUserTokenRepository from '../repositories/IUserTokenRepository';
-import IMailProvider from '../../../shared/container/providers/MailProvider/models/IMailProider';
 import { injectable, inject } from 'tsyringe';
 
 interface IRequestDTO {
-    email: string;
+    token:string;
+    password: string;
 }
 
 @injectable()
-export default class SendForgotPasswordEmailService {
+export default class ResetPasswordService {
 
     constructor(
         @inject('UsersRepository')
         private usersRepository: IUsersRepository,
-        @inject('MailProvider')
-        private mailProvider:IMailProvider,
         @inject('UserTokenRepository')
         private userTokenRepository:IUserTokenRepository
     ) { }
 
-    public async execute({ email }: IRequestDTO): Promise<void> {
+    public async execute({ token, password }: IRequestDTO): Promise<void> {
+        const userToken = await this.userTokenRepository.findByToken(token);
 
-        const user = await this.usersRepository.findByEmail(email);
-
-        if(!user){
-            throw new AppError('User does not exists.');
+        if(!userToken){
+            throw new AppError('User token does not exists');
         }
 
-        await this.userTokenRepository.generate(user.id);
+        const user = await this.usersRepository.findById(userToken.user_id);
 
-        this.mailProvider.sendMail(email, 'Teste envio de e-mail');
+        if(!user){
+            throw new AppError('User does not exists');
+        }
+
+        user.password = password;
+
+        await this.usersRepository.save(user);
     }
 }
