@@ -13,6 +13,8 @@ class FakeUserTokensRepository implements IUserTokensRepository {
         userToken.id = uuid();
         userToken.token = uuid();
         userToken.user_id = user_id;
+        userToken.created_at = new Date();
+        userToken.updated_at = new Date()
 
         this.userTokens.push(userToken);
 
