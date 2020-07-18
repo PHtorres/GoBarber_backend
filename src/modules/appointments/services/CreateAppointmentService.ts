@@ -6,6 +6,7 @@ import { inject, injectable } from 'tsyringe';
 
 interface IRequestDTO {
     provider_id: string;
+    user_id:string;
     date: Date
 }
 
@@ -17,7 +18,7 @@ class CreateAppointmentService {
         private appointmentsRepository: IAppointmentsRepository
     ) { }
 
-    public async execute({ provider_id, date }: IRequestDTO): Promise<Appointment> {
+    public async execute({ provider_id, date, user_id }: IRequestDTO): Promise<Appointment> {
 
         const appointmentDate = startOfHour(date);
 
@@ -30,6 +31,7 @@ class CreateAppointmentService {
         const appointment = await this.appointmentsRepository.create({
             provider_id,
             date: appointmentDate,
+            user_id
         });
 
         return appointment;

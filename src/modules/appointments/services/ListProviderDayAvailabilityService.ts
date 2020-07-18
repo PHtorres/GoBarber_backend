@@ -2,7 +2,7 @@
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 import { injectable, inject } from 'tsyringe';
 
-import { getHours } from 'date-fns';
+import { getHours, isAfter } from 'date-fns';
 
 
 interface IRequestDTO {
@@ -31,13 +31,17 @@ export default class ListProviderDayAvailabilityService {
 
         const hourStart = 8;
 
+        const currentDate = new Date(Date.now());
+
         const eachHourArray = Array.from({length: 10}, (_, index) => index + hourStart);
 
         const availability = eachHourArray.map(hour => {
 
             const hasAppointmentInHour = appointments.find(item => getHours(item.date) === hour);
 
-            return{hour, available:!hasAppointmentInHour}
+            const compareDate = new Date(year, month -1, day, hour);
+
+            return{hour, available:!hasAppointmentInHour && isAfter(compareDate, currentDate)};
         });
 
 
