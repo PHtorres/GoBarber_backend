@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import AuthenticateUserService from '../../../services/AuthenticateUserService';
 import CreateUserService from '../../../services/CreateUserService';
 import { container } from 'tsyringe';
+import {classToClass} from 'class-transformer';
 
 export default class UsersController {
 
@@ -15,7 +15,7 @@ export default class UsersController {
             password
         });
 
-        return response.json(user);
+        return response.json(classToClass(user));
     }
 
 }
