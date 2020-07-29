@@ -1,14 +1,12 @@
-
+import ICacheProvider from '../../../shared/container/providers/CacheProvider/models/ICacheProvider';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 import { injectable, inject } from 'tsyringe';
 import Appointment from '../infra/typeorm/entities/Appointment';
 
-import { getDaysInMonth, getDate } from 'date-fns';
-
 
 interface IRequestDTO {
     provider_id: string;
-    day:number;
+    day: number;
     month: number;
     year: number;
 }
@@ -19,10 +17,16 @@ export default class ListProviderAppointmentsService {
 
     constructor(
         @inject('AppointmentsRepository')
-        private appointmentsRepository: IAppointmentsRepository
+        private appointmentsRepository: IAppointmentsRepository,
+        @inject('CacheProvider')
+        private cacheProvider: ICacheProvider
     ) { }
 
     public async execute({ provider_id, day, month, year }: IRequestDTO): Promise<Appointment[]> {
+
+        const cacheData = await this.cacheProvider.recover('chaveTeste');
+
+        console.log('cacheData', cacheData);
 
         const appointments = await this.appointmentsRepository.findAllInDayFromProvider({
             provider_id,
@@ -30,6 +34,8 @@ export default class ListProviderAppointmentsService {
             month,
             year
         });
+
+        await this.cacheProvider.save('chaveTeste', JSON.stringify(appointments));
 
         return appointments;
     }

@@ -1,2 +1,3 @@
 container docker do postgres: 48ff13114e38
 container docker do mongodb: 1cb0263f7895
+container docker do redis: 256b8825f780
