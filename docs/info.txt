@@ -1,3 +1,11 @@
 container docker do postgres: 48ff13114e38
 container docker do mongodb: 1cb0263f7895
 container docker do redis: 256b8825f780
+
+
+NOVOS:
+
+container docker postgres:a5d7be5e39d6
+container docker mongodb:50a79ec973e4
+
+docker run -e POSTGRES_PASSWORD=12345 --rm -p 5432:5432 phtorres/postgres:latest
