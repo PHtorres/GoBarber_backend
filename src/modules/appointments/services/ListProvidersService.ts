@@ -13,25 +13,23 @@ export default class ListProvidersService {
 
     constructor(
         @inject('UsersRepository')
-        private usersRepository: IUsersRepository,
-        @inject('CacheProvider')
-        private cacheProvider: ICacheProvider,
+        private usersRepository: IUsersRepository
     ) { }
 
     public async execute(dados: IRequestDTO): Promise<User[]> {
 
-        const cacheUsers = await this.cacheProvider.recover<User[]>(`providers-list:${dados.user_id}`);
+        //const cacheUsers = await this.cacheProvider.recover<User[]>(`providers-list:${dados.user_id}`);
 
-        if(!cacheUsers){
+        //if(!cacheUsers){
 
             const users = await this.usersRepository.findAllProviders({ exceptUserId: dados.user_id });
 
-            await this.cacheProvider.save(`providers-list:${dados.user_id}`, users);
+            //await this.cacheProvider.save(`providers-list:${dados.user_id}`, users);
 
             return users;
-        }
+        //}
 
-        return cacheUsers;
+        //return cacheUsers;
 
     }
 }

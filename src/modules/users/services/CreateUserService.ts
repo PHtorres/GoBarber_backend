@@ -18,9 +18,7 @@ export default class CreateUserService {
         @inject('UsersRepository')
         private usersRepository: IUsersRepository,
         @inject('HashProvider')
-        private hashProvider: IHashProvider,
-        @inject('CacheProvider')
-        private cacheProvider: ICacheProvider
+        private hashProvider: IHashProvider
     ) { }
 
     public async execute({ name, email, password }: IRequestDTO): Promise<User> {
@@ -39,7 +37,7 @@ export default class CreateUserService {
             password: hashedPassword
         });
 
-        await this.cacheProvider.invalidatePrefix('providers-list');
+        //await this.cacheProvider.invalidatePrefix('providers-list');
 
         return user;
     }
