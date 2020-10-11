@@ -2,7 +2,7 @@
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 import { injectable, inject } from 'tsyringe';
 
-import { getDaysInMonth, getDate } from 'date-fns';
+import { getDaysInMonth, getDate, isAfter } from 'date-fns';
 
 
 interface IRequestDTO {
@@ -38,11 +38,12 @@ export default class ListProviderMonthAvailabilityService {
         const eachDayArray = Array.from({ length: numberOfDaysInMonth }, (_, index) => index + 1);
 
         const availability = eachDayArray.map(day => {
+            const compareDate = new Date(year, month -1, day, 23, 59, 59);
             const appointmentsInDay = appointments.filter(item => getDate(item.date) === day);
 
             return {
                 day,
-                available: appointmentsInDay.length < 10
+                available: isAfter(compareDate, new Date()) && appointmentsInDay.length < 10
             }
         });
 
